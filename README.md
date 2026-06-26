@@ -6,6 +6,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-D71F00?logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-Persistence-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Azure Blob Storage](https://img.shields.io/badge/Azure%20Blob%20Storage-Object%20Storage-0078D4?logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/services/storage/blobs/)
 [![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=0A0A0A)](https://react.dev/)
 [![Azure](https://img.shields.io/badge/Azure-Deployment-0078D4?logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
 [![Architecture](https://img.shields.io/badge/Architecture-Modular%20Monolith-1F8A70)](#architecture)
@@ -13,11 +14,11 @@
 
 ---
 
-# GitHub About Metadata
+# 🧾GitHub About Metadata
 
 **Description**
 
-Rental property management platform built with Python, FastAPI, SQLAlchemy, MySQL, React, and Azure deployment in mind, organized as a modular monolith with Clean Architecture.
+Rental property management platform built with Python, FastAPI, SQLAlchemy, MySQL, Azure Blob Storage, React, and Azure deployment in mind, organized as a modular monolith with Clean Architecture.
 
 ---
 
@@ -38,7 +39,7 @@ Rental property management platform built with Python, FastAPI, SQLAlchemy, MySQ
 
 **Topics**
 
-property-management, rental-platform, python, fastapi, sqlalchemy, mysql, react, azure, clean-architecture, modular-monolith, saas
+property-management, rental-platform, python, fastapi, sqlalchemy, mysql, azure-blob-storage, react, azure, clean-architecture, modular-monolith, saas
 
 ---
 
@@ -63,6 +64,8 @@ The solution is being built as a modular monolith so that business capabilities 
 * Apply Clean Architecture to separate domain, application, infrastructure, and interface concerns.
 * Provide a REST API with FastAPI for internal and external consumption.
 * Persist operational and financial data in MySQL through a SQLAlchemy-based persistence layer.
+* Store contracts, payment evidence, invoices, and related documents in Azure Blob Storage.
+* Persist only file metadata and Blob references (URL/path/container/key) in MySQL tables.
 * Deliver a modern web interface with React for property management workflows.
 * Keep the solution ready for deployment to Azure as the target cloud platform.
 
@@ -99,6 +102,7 @@ graph TB
 		end
 
 		DB[("MySQL")]
+		BLOB[("Azure Blob Storage")]
 		AZURE["Azure Deployment Target"]
 	end
 
@@ -122,7 +126,9 @@ graph TB
 	DOMAIN --> APPLICATION
 	APPLICATION --> INFRA
 	INTERFACES --> APPLICATION
-	INFRA --> DB
+	INFRA -->|Operational and relational data| DB
+	INFRA -->|Contracts, invoices, and payment files| BLOB
+	DB -->|Stores blob references and metadata| BLOB
 	INFRA --> AZURE
 
 	classDef actor fill:#f4f1ea,stroke:#7a6f5f,color:#1f1a14;
@@ -136,9 +142,33 @@ graph TB
 	class UI,API entry;
 	class ASSETS,CONTRACTS,FINANCE,IAM module;
 	class DOMAIN,APPLICATION,INFRA,INTERFACES layer;
-	class DB data;
+	class DB,BLOB data;
 	class AZURE cloud;
 ```
+---
+## C1 Context Diagram
+
+<p align="center">
+    <img src="docs/diagrams/images/c1-context.png" width="70%">
+</p>
+
+---
+
+---
+## C2 Container Diagram
+
+<p align="center">
+    <img src="docs/diagrams/images/c2-container.png" width="70%">
+</p>
+
+---
+
+---
+## C3 iam Container Diagram
+
+<p align="center">
+    <img src="docs/diagrams/images/c3-iam.png" width="70%">
+</p>
 
 ---
 
@@ -150,6 +180,7 @@ graph TB
 | FastAPI | HTTP API layer |
 | SQLAlchemy | ORM and persistence mapping |
 | MySQL | Relational data storage |
+| Azure Blob Storage | File/object storage for contracts, invoices, and payment evidence |
 | React | Frontend user interface |
 | Docker Compose | Local service orchestration |
 | Alembic | Database migrations |
@@ -187,7 +218,7 @@ property_manager/
 				└── tests/                  # Unit, integration, and end-to-end tests
 ```
 
-The current backend structure already reflects the intended modular organization. Each module is separated into domain, application, infrastructure, and interface layers to keep business rules isolated from framework and persistence concerns, including a persistence approach designed around SQLAlchemy and MySQL.
+The current backend structure already reflects the intended modular organization. Each module is separated into domain, application, infrastructure, and interface layers to keep business rules isolated from framework and persistence concerns, including a persistence approach designed around SQLAlchemy and MySQL for relational data plus Azure Blob Storage for document binaries.
 
 ---
 
@@ -197,6 +228,7 @@ The current backend structure already reflects the intended modular organization
 * Tenant administration with role-aware access flows.
 * Lease contract registration and consultation.
 * Payment registration and tracking for rental operations.
+* Contract, invoice, and payment-evidence file management backed by Blob Storage.
 * Financial balance visibility for managers and tenants.
 * Modular domain organization for assets, contracts, finance, and IAM.
 * Clean Architecture separation between domain, application, infrastructure, and interfaces.
@@ -294,5 +326,29 @@ interconnected, and transaction-sensitive data.
   battle-tested ORM (SQLAlchemy), and decades of operational knowledge reduce
   risk compared to adopting a less standardized query interface for a domain
   that doesn't need horizontal write-scaling at its current scope.
+
+## Why Blob Storage for Files?
+
+Contract documents, invoice files, and payment photos are binary objects with
+different access and lifecycle requirements than transactional records.
+Persisting those files directly in relational tables would increase table size,
+impact query performance, and complicate retention and serving concerns.
+
+### Key Benefits:
+
+* **Database Performance Protection**
+	MySQL stays focused on relational and transactional data. Only file
+	references and metadata are stored in tables, keeping indexes and query
+	plans efficient.
+
+* **Scalable Object Storage**
+	Blob Storage is optimized for large/unbounded binary objects, versioning,
+	and lifecycle management policies, which are ideal for document-heavy
+	workflows.
+
+* **Clear Separation of Responsibilities**
+	The data model keeps business entities in relational tables while external
+	object storage handles file content. This aligns with Clean Architecture and
+	reduces coupling between transactional logic and file delivery concerns.
 
 ---
