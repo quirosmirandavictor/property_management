@@ -57,6 +57,23 @@ The solution is being built as a modular monolith so that business capabilities 
 
 ---
 
+# 🚀 Getting Started
+
+##  🐳  Quick Start with Docker
+
+The fastest way to get the API running locally:
+
+```bash
+cd RentManagerV2/rentmanager-api
+docker-compose up
+```
+
+The API will be available at `http://localhost:8000`
+
+For detailed setup instructions, environment configuration, and local development without Docker, see the [RentManagerV2/rentmanager-api/README.md](RentManagerV2/rentmanager-api/README.md).
+
+---
+
 # 🎯 Objectives
 
 * Build a professional portfolio-grade SaaS platform for rental property administration.

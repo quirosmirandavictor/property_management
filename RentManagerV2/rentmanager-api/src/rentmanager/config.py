@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 	app_debug: bool = True
 	app_secret_key: str = "change-me-in-real-environments-32b"
 	access_token_expire_minutes: int = 30
+	database_url: str = "mysql+pymysql://rentmanager:rentmanager@localhost:3306/rentmanager"
 
 	model_config = SettingsConfigDict(
 		env_file=".env",
