@@ -11,7 +11,8 @@
 [![Azure](https://img.shields.io/badge/Azure-Deployment-0078D4?logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
 [![Architecture](https://img.shields.io/badge/Architecture-Modular%20Monolith-1F8A70)](#architecture)
 [![Design](https://img.shields.io/badge/Design-Clean%20Architecture-0A66C2)](#architecture)
-
+[![Docs Architecture](https://img.shields.io/badge/Docs-Architecture-0A66C2)](docs/)
+[![Last Commit](https://img.shields.io/github/last-commit/quirosmirandavictor/property_management)](https://github.com/quirosmirandavictor//property_management/commits/dev)
 ---
 
 # 🧾GitHub About Metadata
