@@ -190,6 +190,15 @@ graph TB
 
 ---
 
+---
+## C3 assets Container Diagram
+
+<p align="center">
+    <img src="docs/diagrams/images/c3-assets.png" width="70%">
+</p>
+
+---
+
 # ⚙️ Technologies
 
 | Technology | Purpose |
