@@ -10,7 +10,7 @@ workspace "Rent Manager - C2" "Container Diagram" {
                 tags "API"
             }
 
-            database = container "Database" "Stores users, roles, permissions, documents, contracts, metadata, and audit information." "PostgreSQL" {
+            database = container "Database" "Stores users, roles, permissions, documents, contracts, metadata, and audit information." "MySQL" {
                 tags "Database"
             }
 

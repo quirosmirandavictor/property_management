@@ -32,7 +32,9 @@ if str(SRC_DIR) not in sys.path:
 # Import application settings and SQLAlchemy models to access the metadata
 # that defines the current state of the database schema.
 from rentmanager.config import get_settings
+from rentmanager.modules.assets.infrastructure.models import AssetModel
 from rentmanager.modules.iam.infrastructure.models import UserModel
+from rentmanager.shared_kernel.infrastructure.db.base import Base
 
 # Load Alembic configuration from alembic.ini
 config = context.config
@@ -48,10 +50,9 @@ if config.config_file_name is not None:
 # ============================================================================
 # MIGRATION TARGET METADATA
 # ============================================================================
-# Use SQLAlchemy metadata from the IAM models as the source of truth
-# for detecting schema changes. As new modules (Assets, Contracts, Finance)
-# are implemented, their metadata should be merged here.
-target_metadata = UserModel.metadata
+# Use shared SQLAlchemy metadata as the source of truth.
+# Importing each module model registers its tables into Base.metadata.
+target_metadata = Base.metadata
 
 
 # ============================================================================

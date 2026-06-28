@@ -44,7 +44,7 @@ workspace "Rent Manager System - C3 IAM" "IAM Component Diagram" {
                 }
             }
 
-            database = container "Database" "Stores users, roles and permissions." "PostgreSQL"
+            database = container "Database" "Stores users, roles and permissions." "MySQL"
         }
 
         user -> authController "Authenticates"

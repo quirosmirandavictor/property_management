@@ -18,11 +18,17 @@ Suggested core fields:
 
 ## Assets
 
-- `assets`: rentable properties or units.
+- `assets`: rentable properties or units that act as the aggregate root consumed by contracts and finance.
 
 Suggested core fields:
 
 - `assets`: `id`, `asset_code`, `asset_type`, `name`, `address_line`, `bedroom_count`, `rental_value`, `balance_favor`, `status`, `created_at`, `updated_at`.
+
+Notes derived from the legacy MariaDB design:
+
+- `asset_type`, `bedroom_count`, and `rental_value` come directly from the legacy `BienAlquilado` concept (`TipoBien`, `NumeroHabitaciones`, `ValorAlquiler`).
+- Binary content such as contract files, payment receipts, or expense evidence should not live in `assets`; only metadata and references belong in relational storage.
+- `contracts`, `payments`, `expenses`, `incomes`, and `invoices` should reference `asset_id` as their owning property/unit.
 
 ## Contracts
 
