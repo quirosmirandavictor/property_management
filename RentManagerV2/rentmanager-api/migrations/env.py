@@ -32,6 +32,9 @@ if str(SRC_DIR) not in sys.path:
 # Import application settings and SQLAlchemy models to access the metadata
 # that defines the current state of the database schema.
 from rentmanager.config import get_settings
+from rentmanager.modules.contracts.infrastructure.models import ContractDocumentModel
+from rentmanager.modules.contracts.infrastructure.models import ContractModel
+from rentmanager.modules.contracts.infrastructure.models import TenantContractModel
 from rentmanager.modules.assets.infrastructure.models import AssetModel
 from rentmanager.modules.iam.infrastructure.models import UserModel
 from rentmanager.shared_kernel.infrastructure.db.base import Base

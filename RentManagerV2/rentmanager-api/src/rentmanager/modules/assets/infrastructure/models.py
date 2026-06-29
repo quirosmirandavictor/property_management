@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import DateTime, Integer, Numeric, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from rentmanager.shared_kernel.infrastructure.db.base import Base
 
@@ -38,4 +38,9 @@ class AssetModel(Base):
 		DateTime(timezone=True),
 		nullable=False,
 		server_default=func.now(),
+	)
+
+	contracts: Mapped[list["ContractModel"]] = relationship(
+		back_populates="asset",
+		cascade="all, delete-orphan",
 	)
