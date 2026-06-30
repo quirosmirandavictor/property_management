@@ -32,6 +32,20 @@ if str(SRC_DIR) not in sys.path:
 # Import application settings and SQLAlchemy models to access the metadata
 # that defines the current state of the database schema.
 from rentmanager.config import get_settings
+
+
+from rentmanager.modules.finance.infrastructure.models import ExpenseTypesModel
+from rentmanager.modules.finance.infrastructure.models import IncomeTypesModel
+from rentmanager.modules.finance.infrastructure.models import TaxTypesModel
+from rentmanager.modules.finance.infrastructure.models import PaymentsModel
+from rentmanager.modules.finance.infrastructure.models import ExpenseModel
+from rentmanager.modules.finance.infrastructure.models import IncomeModel
+from rentmanager.modules.finance.infrastructure.models import InvoiceModel
+from rentmanager.modules.finance.infrastructure.models import InvoiceLineModel
+from rentmanager.modules.finance.infrastructure.models import InvoiceDocumentModel
+from rentmanager.modules.finance.infrastructure.models import PaymentAttachmentModel
+
+
 from rentmanager.modules.contracts.infrastructure.models import ContractDocumentModel
 from rentmanager.modules.contracts.infrastructure.models import ContractModel
 from rentmanager.modules.contracts.infrastructure.models import TenantContractModel

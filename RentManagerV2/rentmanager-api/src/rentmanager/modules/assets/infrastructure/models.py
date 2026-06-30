@@ -2,11 +2,19 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Integer, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from rentmanager.shared_kernel.infrastructure.db.base import Base
+
+if TYPE_CHECKING:
+	from rentmanager.modules.contracts.infrastructure.models import ContractModel
+	from rentmanager.modules.finance.infrastructure.models import ExpenseModel
+	from rentmanager.modules.finance.infrastructure.models import IncomeModel
+	from rentmanager.modules.finance.infrastructure.models import InvoiceModel
+	from rentmanager.modules.finance.infrastructure.models import PaymentsModel
 
 
 class AssetModel(Base):
@@ -41,6 +49,22 @@ class AssetModel(Base):
 	)
 
 	contracts: Mapped[list["ContractModel"]] = relationship(
+		back_populates="asset",
+		cascade="all, delete-orphan",
+	)
+	payments: Mapped[list["PaymentsModel"]] = relationship(
+		back_populates="asset",
+		cascade="all, delete-orphan",
+	)
+	expenses: Mapped[list["ExpenseModel"]] = relationship(
+		back_populates="asset",
+		cascade="all, delete-orphan",
+	)
+	incomes: Mapped[list["IncomeModel"]] = relationship(
+		back_populates="asset",
+		cascade="all, delete-orphan",
+	)
+	invoices: Mapped[list["InvoiceModel"]] = relationship(
 		back_populates="asset",
 		cascade="all, delete-orphan",
 	)
