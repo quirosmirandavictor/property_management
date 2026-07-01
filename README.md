@@ -199,6 +199,24 @@ graph TB
 
 ---
 
+---
+## C3 contracts Container Diagram
+
+<p align="center">
+    <img src="docs/diagrams/images/c3-contracts.png" width="70%">
+</p>
+
+---
+
+---
+## C3 finance Container Diagram
+
+<p align="center">
+    <img src="docs/diagrams/images/c3-finance.png" width="70%">
+</p>
+
+---
+
 # ⚙️ Technologies
 
 | Technology | Purpose |
