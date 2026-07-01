@@ -182,7 +182,7 @@ graph TB
 ---
 
 ---
-## C3 iam Container Diagram
+## C3 iam Module Diagram
 
 <p align="center">
     <img src="docs/diagrams/images/c3-iam.png" width="70%">
@@ -191,7 +191,7 @@ graph TB
 ---
 
 ---
-## C3 assets Container Diagram
+## C3 assets Module Diagram
 
 <p align="center">
     <img src="docs/diagrams/images/c3-assets.png" width="70%">
@@ -200,7 +200,7 @@ graph TB
 ---
 
 ---
-## C3 contracts Container Diagram
+## C3 contracts Module Diagram
 
 <p align="center">
     <img src="docs/diagrams/images/c3-contracts.png" width="70%">
@@ -209,7 +209,7 @@ graph TB
 ---
 
 ---
-## C3 finance Container Diagram
+## C3 finance Module Diagram
 
 <p align="center">
     <img src="docs/diagrams/images/c3-finance.png" width="70%">
