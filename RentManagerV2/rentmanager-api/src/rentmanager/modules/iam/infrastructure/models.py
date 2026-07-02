@@ -35,6 +35,10 @@ class UserModel(Base):
 		back_populates="user",
 		cascade="all, delete-orphan",
 	)
+	refresh_tokens: Mapped[list[RefreshTokenModel]] = relationship(
+		back_populates="user",
+		cascade="all, delete-orphan",
+	)
 
 
 class RoleModel(Base):
@@ -110,3 +114,23 @@ class RoleFunctionalityModel(Base):
 
 	role: Mapped[RoleModel] = relationship(back_populates="functionalities")
 	functionality: Mapped[FunctionalityModel] = relationship(back_populates="roles")
+
+
+class RefreshTokenModel(Base):
+	__tablename__ = "iam_refresh_tokens"
+
+	id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+	user_id: Mapped[int] = mapped_column(
+		ForeignKey("iam_users.id", ondelete="CASCADE"),
+		nullable=False,
+	)
+	jti: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+	expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+	revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+	created_at: Mapped[datetime] = mapped_column(
+		DateTime(timezone=True),
+		nullable=False,
+		server_default=func.now(),
+	)
+
+	user: Mapped[UserModel] = relationship(back_populates="refresh_tokens")

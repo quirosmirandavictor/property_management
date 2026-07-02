@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
 from rentmanager.modules.iam.domain.entities import Functionality
+from rentmanager.modules.iam.domain.entities import RefreshToken
 from rentmanager.modules.iam.domain.entities import Role
 from rentmanager.modules.iam.domain.entities import User
 
@@ -110,3 +111,19 @@ class FunctionalityRepository(ABC):
 	@abstractmethod
 	def delete(self, functionality_id: int) -> None:
 		"""Delete one functionality by identifier."""
+
+
+class RefreshTokenRepository(ABC):
+	"""Contract for persisting and retrieving IAM refresh tokens."""
+
+	@abstractmethod
+	def add(self, token: RefreshToken) -> RefreshToken:
+		"""Persist a new refresh token and return its current state."""
+
+	@abstractmethod
+	def get_by_jti(self, jti: str) -> RefreshToken | None:
+		"""Return one refresh token by token identifier."""
+
+	@abstractmethod
+	def revoke(self, jti: str) -> None:
+		"""Mark one refresh token as revoked when it exists."""

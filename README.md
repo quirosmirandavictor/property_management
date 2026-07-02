@@ -60,18 +60,123 @@ The solution is being built as a modular monolith so that business capabilities 
 
 # 🚀 Getting Started
 
-##  🐳  Quick Start with Docker
+## Prerequisites
 
-The fastest way to get the API running locally:
+Before running the project, make sure these tools are available:
+
+- Python 3.12+
+- Docker Desktop 4+
+- Docker Compose v2 (docker compose)
+- Git
+
+## Verify Your Environment
+
+Use these commands to check tool availability:
 
 ```bash
-cd RentManagerV2/rentmanager-api
-docker-compose up
+python --version
+docker --version
+docker compose version
+git --version
 ```
 
-The API will be available at `http://localhost:8000`
+If any tool is missing, install it first:
 
-For detailed setup instructions, environment configuration, and local development without Docker, see the [RentManagerV2/rentmanager-api/README.md](RentManagerV2/rentmanager-api/README.md).
+- Python: https://www.python.org/downloads/
+- Docker Desktop: https://www.docker.com/products/docker-desktop/
+- Git: https://git-scm.com/downloads
+
+## 🐳 Run with Docker (Recommended)
+
+1. Open a terminal at the repository root.
+2. Move to the API project:
+
+	```bash
+	cd RentManagerV2/rentmanager-api
+	```
+
+3. Create your environment file:
+
+	```bash
+	cp .env.example .env
+	```
+
+	On PowerShell, if cp is not available:
+
+	```powershell
+	Copy-Item .env.example .env
+	```
+
+4. Start API + MySQL:
+
+	```bash
+	docker compose up --build
+	```
+
+5. API endpoint:
+
+	http://localhost:8000
+
+6. Quick health check:
+
+	```bash
+	curl http://localhost:8000/health
+	```
+
+7. Run tests in containers:
+
+	```bash
+	docker compose --profile test run --rm tests
+	```
+
+8. Stop services:
+
+	```bash
+	docker compose down
+	```
+
+9. Full reset (including MySQL volume):
+
+	```bash
+	docker compose down -v
+	```
+
+## Local Run Without Docker
+
+Use this path only when Docker is not available.
+
+1. Move to the API project:
+
+	```bash
+	cd RentManagerV2/rentmanager-api
+	```
+
+2. Create the environment file:
+
+	```bash
+	cp .env.example .env
+	```
+
+3. Install dependencies:
+
+	```bash
+	pip install -e .[dev]
+	```
+
+4. Configure a reachable MySQL server in .env.
+5. Apply migrations:
+
+	```bash
+	alembic upgrade head
+	```
+
+6. Start the API:
+
+	```bash
+	uvicorn rentmanager.main:app --reload
+	```
+
+For service-level details, environment variables, and API-specific commands, see [RentManagerV2/rentmanager-api/README.md](RentManagerV2/rentmanager-api/README.md).
 
 ---
 

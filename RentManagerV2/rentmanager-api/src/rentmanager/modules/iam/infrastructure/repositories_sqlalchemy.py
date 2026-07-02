@@ -1,23 +1,29 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from collections.abc import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from rentmanager.modules.iam.domain.entities import Functionality
+from rentmanager.modules.iam.domain.entities import RefreshToken
 from rentmanager.modules.iam.domain.entities import Role
 from rentmanager.modules.iam.domain.entities import User
 from rentmanager.modules.iam.domain.repositories import FunctionalityRepository
+from rentmanager.modules.iam.domain.repositories import RefreshTokenRepository
 from rentmanager.modules.iam.domain.repositories import RoleRepository
 from rentmanager.modules.iam.domain.repositories import UserRepository
 from rentmanager.modules.iam.infrastructure.mappers import functionality_to_entity
+from rentmanager.modules.iam.infrastructure.mappers import merge_refresh_token_into_model
 from rentmanager.modules.iam.infrastructure.mappers import merge_functionality_into_model
 from rentmanager.modules.iam.infrastructure.mappers import merge_role_into_model
 from rentmanager.modules.iam.infrastructure.mappers import merge_user_into_model
+from rentmanager.modules.iam.infrastructure.mappers import refresh_token_to_entity
 from rentmanager.modules.iam.infrastructure.mappers import role_to_entity
 from rentmanager.modules.iam.infrastructure.mappers import user_to_entity
 from rentmanager.modules.iam.infrastructure.models import FunctionalityModel
+from rentmanager.modules.iam.infrastructure.models import RefreshTokenModel
 from rentmanager.modules.iam.infrastructure.models import RoleFunctionalityModel
 from rentmanager.modules.iam.infrastructure.models import RoleModel
 from rentmanager.modules.iam.infrastructure.models import UserModel
@@ -310,3 +316,38 @@ class SqlAlchemyFunctionalityRepository(FunctionalityRepository):
 		if model is None:
 			raise ValueError(f"Functionality with id {functionality_id} was not found.")
 		return model
+
+
+class SqlAlchemyRefreshTokenRepository(RefreshTokenRepository):
+	"""SQLAlchemy implementation of the IAM refresh-token repository contract."""
+
+	def __init__(self, session: Session) -> None:
+		"""Store the current SQLAlchemy session used by the unit of work."""
+
+		self._session = session
+
+	def add(self, token: RefreshToken) -> RefreshToken:
+		"""Insert a new refresh-token row and return the resulting entity."""
+
+		model = merge_refresh_token_into_model(token)
+		self._session.add(model)
+		self._session.flush()
+		return refresh_token_to_entity(model)
+
+	def get_by_jti(self, jti: str) -> RefreshToken | None:
+		"""Load one refresh token by token identifier."""
+
+		stmt = select(RefreshTokenModel).where(RefreshTokenModel.jti == jti)
+		model = self._session.scalar(stmt)
+		return refresh_token_to_entity(model) if model is not None else None
+
+	def revoke(self, jti: str) -> None:
+		"""Mark one refresh token as revoked when it exists."""
+
+		stmt = select(RefreshTokenModel).where(RefreshTokenModel.jti == jti)
+		model = self._session.scalar(stmt)
+		if model is None:
+			return
+		if model.revoked_at is None:
+			model.revoked_at = datetime.now(UTC)
+			self._session.flush()

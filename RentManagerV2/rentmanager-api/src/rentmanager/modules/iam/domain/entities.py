@@ -40,3 +40,15 @@ class User:
 	created_at: datetime | None = None
 	updated_at: datetime | None = None
 	roles: list[Role] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class RefreshToken:
+	"""Domain representation of one persisted refresh token."""
+
+	id: int | None
+	user_id: int
+	jti: str
+	expires_at: datetime
+	revoked_at: datetime | None = None
+	created_at: datetime | None = None

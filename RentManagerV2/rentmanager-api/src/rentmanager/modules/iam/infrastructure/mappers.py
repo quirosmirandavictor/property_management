@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from rentmanager.modules.iam.domain.entities import Functionality
+from rentmanager.modules.iam.domain.entities import RefreshToken
 from rentmanager.modules.iam.domain.entities import Role
 from rentmanager.modules.iam.domain.entities import User
 from rentmanager.modules.iam.infrastructure.models import FunctionalityModel
+from rentmanager.modules.iam.infrastructure.models import RefreshTokenModel
 from rentmanager.modules.iam.infrastructure.models import RoleModel
 from rentmanager.modules.iam.infrastructure.models import UserModel
 
@@ -95,4 +97,31 @@ def merge_user_into_model(entity: User, model: UserModel | None = None) -> UserM
 	model.phone = entity.phone
 	model.password_hash = entity.password_hash
 	model.is_active = entity.is_active
+	return model
+
+
+def refresh_token_to_entity(model: RefreshTokenModel) -> RefreshToken:
+	"""Translate one ORM refresh-token row into a domain entity."""
+
+	return RefreshToken(
+		id=model.id,
+		user_id=model.user_id,
+		jti=model.jti,
+		expires_at=model.expires_at,
+		revoked_at=model.revoked_at,
+		created_at=model.created_at,
+	)
+
+
+def merge_refresh_token_into_model(
+	entity: RefreshToken,
+	model: RefreshTokenModel | None = None,
+) -> RefreshTokenModel:
+	"""Copy scalar domain fields into an ORM refresh-token instance."""
+
+	model = model or RefreshTokenModel()
+	model.user_id = entity.user_id
+	model.jti = entity.jti
+	model.expires_at = entity.expires_at
+	model.revoked_at = entity.revoked_at
 	return model
