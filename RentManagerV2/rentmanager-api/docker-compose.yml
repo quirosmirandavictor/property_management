@@ -33,11 +33,18 @@ services:
       DATABASE_URL: mysql+pymysql://rentmanager:rentmanager@mysql:3306/rentmanager
       APP_ENV: docker
       APP_DEBUG: "true"
+      IAM_ADMIN_USERNAME: ${IAM_ADMIN_USERNAME:-admin}
+      IAM_ADMIN_PASSWORD: ${IAM_ADMIN_PASSWORD:-Admin123*}
+      IAM_ADMIN_FIRST_NAME: ${IAM_ADMIN_FIRST_NAME:-System}
+      IAM_ADMIN_LAST_NAME: ${IAM_ADMIN_LAST_NAME:-Administrator}
+      IAM_ADMIN_EMAIL: ${IAM_ADMIN_EMAIL:-admin@local.dev}
+      IAM_ADMIN_ROLE: ${IAM_ADMIN_ROLE:-ADMIN}
     depends_on:
       mysql:
         condition: service_healthy
     command: >
       sh -c "alembic upgrade head &&
+             python scripts/seed_admin_user.py &&
              uvicorn rentmanager.main:app --host 0.0.0.0 --port 8000"
 
   tests:

@@ -116,7 +116,10 @@ def refresh_token(
 			status_code=status.HTTP_401_UNAUTHORIZED,
 			detail="Refresh token revoked or unknown",
 		)
-	if persisted.expires_at < datetime.now(UTC):
+	persisted_expires_at = persisted.expires_at
+	if persisted_expires_at.tzinfo is None:
+		persisted_expires_at = persisted_expires_at.replace(tzinfo=UTC)
+	if persisted_expires_at < datetime.now(UTC):
 		raise HTTPException(
 			status_code=status.HTTP_401_UNAUTHORIZED,
 			detail="Refresh token expired",

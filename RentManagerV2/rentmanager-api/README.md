@@ -115,13 +115,54 @@ JWT_PUBLIC_KEY_PATH=.keys/public_key.pem
 ACCESS_TOKEN_EXPIRE_MINUTES=15
 REFRESH_TOKEN_EXPIRE_DAYS=7
 DATABASE_URL=mysql+pymysql://rentmanager:rentmanager@mysql:3306/rentmanager
+IAM_ADMIN_USERNAME=admin
+IAM_ADMIN_PASSWORD=Admin123*
+IAM_ADMIN_FIRST_NAME=System
+IAM_ADMIN_LAST_NAME=Administrator
+IAM_ADMIN_EMAIL=admin@local.dev
+IAM_ADMIN_ROLE=ADMIN
 ```
 
 Notes:
 
 - Inside Docker Compose, use `mysql` as database host.
 - Outside Docker, use `localhost` if your MySQL server runs on the local machine.
-- For development and tests, if RSA key files are not present, the app can use ephemeral keys.
+- This repository includes development-only RSA keys under `.keys/` for Docker startup. Replace them before production deployments.
+- For local `dev` and `test` environments, if RSA key files are not present, the app can use ephemeral keys.
+
+## Docker IAM bootstrap
+
+- The API container runs migrations on startup.
+- Then it executes `python scripts/seed_admin_user.py`.
+- The seed is idempotent: it creates the configured admin user and ADMIN role when missing, and links them when not assigned.
+
+You can run the bootstrap script manually:
+
+```bash
+python scripts/seed_admin_user.py
+```
+
+## Quick JWT validation flow
+
+1. Start services:
+
+   `docker compose up --build`
+
+2. Login with seeded admin credentials:
+
+   `POST /api/v1/auth/login`
+
+3. Use the returned `access_token` in the Authorization header to call:
+
+   `GET /api/v1/auth/me`
+
+4. Rotate refresh token:
+
+   `POST /api/v1/auth/refresh`
+
+5. Revoke refresh token:
+
+   `POST /api/v1/auth/logout`
 
 ## Endpoints
 
