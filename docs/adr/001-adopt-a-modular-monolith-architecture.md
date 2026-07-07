@@ -9,7 +9,7 @@ Accepted <!-- Proposed | Accepted | Rejected | Deprecated | Superseded -->
 
 ## Context
 
-The legacy system, built using Django, suffered from an unclean architecture and poor practices regarding the standard Model-View-Controller (MVC) pattern. All existing functionalities coexisted tightly coupled within this MVC structure, leading to a "big ball of mud" where business logic, database queries, and presentation rules were heavily intertwined.
+The legacy system, built using Django, suffered from an unclean architecture and poor practices regarding the standard Model-View-Controller (MVT) pattern. All existing functionalities coexisted tightly coupled within this MVT structure, leading to a "big ball of mud" where business logic, database queries, and presentation rules were heavily intertwined.
 
 Although the system currently has few developed features, the lack of boundaries makes it difficult to maintain and scale. Migrating directly to microservices would introduce premature complexity and infrastructure overhead that the current scope does not justify.
 
@@ -49,7 +49,7 @@ Instead of isolating features purely by technical layers (Models/Views), the app
 
 **Cons**
 
-- High Risk of Architectural Drift: Without strict physical boundaries, it is extremely easy for developers to bypass logical layers, eventually falling back into the same chaotic, tightly coupled MVC structure.
+- High Risk of Architectural Drift: Without strict physical boundaries, it is extremely easy for developers to bypass logical layers, eventually falling back into the same chaotic, tightly coupled MVT structure.
 
 - Framework Lock-in & Overhead: Django's tightly integrated ORM and MTV (Model-Template-View) pattern make it difficult to enforce a strict Clean Architecture or separation of concerns.
 
@@ -77,7 +77,7 @@ Instead of isolating features purely by technical layers (Models/Views), the app
 
 ### Positive
 
-- **Strong Domain Decoupling:** Enforces strict boundaries between business domains, resolving the legacy issue where all features coexisted in a tangled Django MVC structure.
+- **Strong Domain Decoupling:** Enforces strict boundaries between business domains, resolving the legacy issue where all features coexisted in a tangled Django MVT structure.
 - **Architectural Control and Maintenance:** Easier to test, understand, and refactor separate modules without the risk of breaking unrelated functionalities.
 - **Microservice Readiness:** Provides a seamless evolutionary pathway to extract specific modules into independent microservices in the future if scalability demands it.
 - **Low Operational Complexity:** Keeps infrastructure, deployment pipelines, and database management simple by avoiding the overhead of a fully distributed system.
