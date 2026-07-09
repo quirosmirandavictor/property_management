@@ -107,6 +107,7 @@ Create a `.env` file in the `rentmanager-api` directory with the following varia
 ```env
 APP_NAME=RentManager API
 APP_ENV=dev
+PRODUCTION_ENV=false
 APP_DEBUG=true
 APP_SECRET_KEY=change-me-in-real-environments-32b
 JWT_ALGORITHM=RS256
@@ -129,6 +130,13 @@ Notes:
 - Outside Docker, use `localhost` if your MySQL server runs on the local machine.
 - This repository includes development-only RSA keys under `.keys/` for Docker startup. Replace them before production deployments.
 - For local `dev` and `test` environments, if RSA key files are not present, the app can use ephemeral keys.
+- `PRODUCTION_ENV=true` disables OpenAPI endpoints (`/openapi.json`, `/docs`, `/redoc`).
+
+## API documentation policy (Swagger/OpenAPI)
+
+- In non-production environments (`PRODUCTION_ENV=false`), interactive API documentation is available through Swagger UI (`/docs`).
+- In production (`PRODUCTION_ENV=true`), the documentation endpoints are disabled for security hardening.
+- Development rule: every new endpoint or payload added from now on must include OpenAPI documentation metadata (summary, description, and relevant responses).
 
 ## Docker IAM bootstrap
 
@@ -164,6 +172,19 @@ python scripts/seed_admin_user.py
 
    `POST /api/v1/auth/logout`
 
+## Assets module API (protected by IAM)
+
+The assets module does not define a separate authentication system.
+It reuses IAM JWT authentication and functionality-based authorization.
+
+Required IAM functionality codes:
+
+- `assets.read`: allows reading asset records.
+- `assets.write`: allows creating, updating, and deleting asset records.
+
+The bootstrap script (`scripts/seed_admin_user.py`) now ensures these
+functionalities exist and are linked to the configured admin role.
+
 ## Endpoints
 
 - `GET /health`
@@ -171,3 +192,8 @@ python scripts/seed_admin_user.py
 - `POST /api/v1/auth/refresh`
 - `POST /api/v1/auth/logout`
 - `GET /api/v1/auth/me`
+- `POST /api/v1/assets`
+- `GET /api/v1/assets`
+- `GET /api/v1/assets/{asset_id}`
+- `PATCH /api/v1/assets/{asset_id}`
+- `DELETE /api/v1/assets/{asset_id}`

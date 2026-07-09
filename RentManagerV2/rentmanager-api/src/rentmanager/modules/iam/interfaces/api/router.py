@@ -29,7 +29,16 @@ from rentmanager.shared_kernel.infrastructure.security.jwt_provider import JwtPr
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login", response_model=LoginResponse)
+@router.post(
+	"/login",
+	response_model=LoginResponse,
+	summary="Authenticate user",
+	description="Validate credentials and issue one access token plus one refresh token.",
+	responses={
+		401: {"description": "Invalid credentials or inactive user."},
+		500: {"description": "Refresh token payload generation failed."},
+	},
+)
 def login(
 	payload: LoginRequest,
 	use_case: AuthenticateUserUseCase = Depends(get_authenticate_user_use_case),
@@ -80,7 +89,16 @@ def login(
 	)
 
 
-@router.post("/refresh", response_model=LoginResponse)
+@router.post(
+	"/refresh",
+	response_model=LoginResponse,
+	summary="Rotate refresh token",
+	description="Revoke current refresh token and return a new access/refresh token pair.",
+	responses={
+		401: {"description": "Refresh token invalid, revoked, unknown, or expired."},
+		500: {"description": "Refresh token payload generation failed."},
+	},
+)
 def refresh_token(
 	payload: RefreshTokenRequest,
 	jwt_provider: JwtProvider = Depends(get_jwt_provider),
@@ -162,7 +180,16 @@ def refresh_token(
 	)
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post(
+	"/logout",
+	status_code=status.HTTP_204_NO_CONTENT,
+	summary="Logout user",
+	description="Invalidate one refresh token to terminate session continuity.",
+	responses={
+		204: {"description": "Refresh token revoked successfully."},
+		401: {"description": "Refresh token is invalid or malformed."},
+	},
+)
 def logout(
 	payload: LogoutRequest,
 	jwt_provider: JwtProvider = Depends(get_jwt_provider),
@@ -192,7 +219,15 @@ def logout(
 	refresh_tokens.revoke(jti)
 
 
-@router.get("/me", response_model=CurrentUserResponse)
+@router.get(
+	"/me",
+	response_model=CurrentUserResponse,
+	summary="Get authenticated user",
+	description="Return identity information extracted from the current access token.",
+	responses={
+		401: {"description": "Missing or invalid access token."},
+	},
+)
 def me(
 	user_id: int = Depends(get_current_user_id),
 	username: str = Depends(get_current_username),

@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
 	app_name: str = "RentManager API"
 	app_env: str = "dev"
+	production_env: bool = False
 	app_debug: bool = True
 	app_secret_key: str = "change-me-in-real-environments-32b"
 	jwt_algorithm: str = "RS256"

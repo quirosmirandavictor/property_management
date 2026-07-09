@@ -5,7 +5,9 @@ import sys
 
 from sqlalchemy import select
 
+from rentmanager.modules.iam.infrastructure.models import FunctionalityModel
 from rentmanager.modules.iam.infrastructure.models import RoleModel
+from rentmanager.modules.iam.infrastructure.models import RoleFunctionalityModel
 from rentmanager.modules.iam.infrastructure.models import UserModel
 from rentmanager.modules.iam.infrastructure.models import UserRoleModel
 from rentmanager.shared_kernel.infrastructure.db.session import SessionFactory
@@ -26,6 +28,10 @@ def main() -> int:
 	last_name = _get_env("IAM_ADMIN_LAST_NAME", "Administrator")
 	email = _get_env("IAM_ADMIN_EMAIL", "admin@local.dev")
 	role_name = _get_env("IAM_ADMIN_ROLE", "ADMIN")
+	functionalities = {
+		"assets.read": ("Read assets", "Allow querying asset information"),
+		"assets.write": ("Write assets", "Allow creating and mutating asset information"),
+	}
 
 	if len(password) < 6:
 		print("IAM_ADMIN_PASSWORD must be at least 6 characters long.", file=sys.stderr)
@@ -73,11 +79,40 @@ def main() -> int:
 			session.add(UserRoleModel(user_id=user.id, role_id=role.id))
 			role_linked = True
 
+		functionalities_created = 0
+		functionalities_linked = 0
+		for functionality_code, (functionality_name, functionality_description) in functionalities.items():
+			functionality = session.scalar(
+				select(FunctionalityModel).where(FunctionalityModel.code == functionality_code)
+			)
+			if functionality is None:
+				functionality = FunctionalityModel(
+					code=functionality_code,
+					name=functionality_name,
+					description=functionality_description,
+				)
+				session.add(functionality)
+				session.flush()
+				functionalities_created += 1
+
+			role_functionality = session.scalar(
+				select(RoleFunctionalityModel).where(
+					RoleFunctionalityModel.role_id == role.id,
+					RoleFunctionalityModel.functionality_id == functionality.id,
+				)
+			)
+			if role_functionality is None:
+				session.add(
+					RoleFunctionalityModel(role_id=role.id, functionality_id=functionality.id)
+				)
+				functionalities_linked += 1
+
 		session.commit()
 
 		print(
 			"Bootstrap admin completed "
-			f"(user_created={user_created}, role_created={role_created}, role_linked={role_linked})."
+			f"(user_created={user_created}, role_created={role_created}, role_linked={role_linked}, "
+			f"functionalities_created={functionalities_created}, functionalities_linked={functionalities_linked})."
 		)
 		return 0
 	except Exception as exc:

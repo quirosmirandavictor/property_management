@@ -178,6 +178,24 @@ Use this path only when Docker is not available.
 
 For service-level details, environment variables, and API-specific commands, see [RentManagerV2/rentmanager-api/README.md](RentManagerV2/rentmanager-api/README.md).
 
+## Current API Surface (Phase 0)
+
+The backend currently exposes:
+
+- Health endpoint: `GET /health`
+- IAM authentication endpoints under `GET/POST /api/v1/auth/*`
+- Assets module CRUD endpoints under `POST/GET/PATCH/DELETE /api/v1/assets*`
+
+Authentication and authorization are centralized in the IAM module for all modules.
+The assets module reuses IAM JWT + role functionality checks and does not implement
+a separate authentication mechanism.
+
+Swagger/OpenAPI policy:
+
+- API docs are available only when `PRODUCTION_ENV=false`.
+- Set `PRODUCTION_ENV=true` to disable `/docs`, `/redoc`, and `/openapi.json`.
+- Every new backend endpoint must be documented through OpenAPI metadata.
+
 ---
 
 # 🎯 Objectives
