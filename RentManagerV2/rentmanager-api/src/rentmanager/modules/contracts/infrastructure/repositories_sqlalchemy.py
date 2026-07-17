@@ -5,16 +5,19 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from rentmanager.modules.contracts.domain.entities import Contract
-from rentmanager.modules.contracts.domain.entities import ContractDocument
+from rentmanager.modules.contracts.domain.entities import Contract, ContractDocument
 from rentmanager.modules.contracts.domain.repositories import ContractRepository
-from rentmanager.modules.contracts.infrastructure.mappers import contract_to_entity
-from rentmanager.modules.contracts.infrastructure.mappers import contract_document_to_entity
-from rentmanager.modules.contracts.infrastructure.mappers import merge_contract_into_model
-from rentmanager.modules.contracts.infrastructure.mappers import merge_document_into_model
-from rentmanager.modules.contracts.infrastructure.models import ContractDocumentModel
-from rentmanager.modules.contracts.infrastructure.models import ContractModel
-from rentmanager.modules.contracts.infrastructure.models import TenantContractModel
+from rentmanager.modules.contracts.infrastructure.mappers import (
+	contract_document_to_entity,
+	contract_to_entity,
+	merge_contract_into_model,
+	merge_document_into_model,
+)
+from rentmanager.modules.contracts.infrastructure.models import (
+	ContractDocumentModel,
+	ContractModel,
+	TenantContractModel,
+)
 from rentmanager.modules.iam.infrastructure.models import UserModel
 
 
@@ -64,16 +67,20 @@ class SqlAlchemyContractRepository(ContractRepository):
 		model = self._session.scalar(stmt)
 		return contract_to_entity(model) if model is not None else None
 
+	def list(self, *, asset_id: int | None = None, status: str | None = None) -> Sequence[Contract]:
+		"""Load contracts filtered by optional asset and status criteria."""
+
+		stmt = select(ContractModel).options(*_contract_load_options())
+		if asset_id is not None:
+			stmt = stmt.where(ContractModel.asset_id == asset_id)
+		if status is not None:
+			stmt = stmt.where(ContractModel.status == status)
+		stmt = stmt.order_by(ContractModel.start_date.desc())
+		return [contract_to_entity(model) for model in self._session.scalars(stmt).all()]
+
 	def list_by_asset(self, asset_id: int) -> Sequence[Contract]:
 		"""Load contracts that belong to one asset."""
-
-		stmt = (
-			select(ContractModel)
-			.options(*_contract_load_options())
-			.where(ContractModel.asset_id == asset_id)
-			.order_by(ContractModel.start_date.desc())
-		)
-		return [contract_to_entity(model) for model in self._session.scalars(stmt).all()]
+		return self.list(asset_id=asset_id)
 
 	def add_tenant(self, contract_id: int, user_id: int, role_in_contract: str) -> None:
 		"""Attach one tenant to one contract if the pair does not already exist."""

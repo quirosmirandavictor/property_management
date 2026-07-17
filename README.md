@@ -185,10 +185,14 @@ The backend currently exposes:
 - Health endpoint: `GET /health`
 - IAM authentication endpoints under `GET/POST /api/v1/auth/*`
 - Assets module CRUD endpoints under `POST/GET/PATCH/DELETE /api/v1/assets*`
+- Contracts module endpoints under `POST/GET/PATCH/DELETE /api/v1/contracts*`
+	plus tenant and document reference management routes.
 
 Authentication and authorization are centralized in the IAM module for all modules.
 The assets module reuses IAM JWT + role functionality checks and does not implement
 a separate authentication mechanism.
+The contracts module follows the same IAM authorization model and stores only
+Azure Blob document references in MySQL.
 
 Swagger/OpenAPI policy:
 

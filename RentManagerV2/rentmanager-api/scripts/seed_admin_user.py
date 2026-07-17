@@ -31,6 +31,11 @@ def main() -> int:
 	functionalities = {
 		"assets.read": ("Read assets", "Allow querying asset information"),
 		"assets.write": ("Write assets", "Allow creating and mutating asset information"),
+		"contracts.read": ("Read contracts", "Allow querying contract information"),
+		"contracts.write": (
+			"Write contracts",
+			"Allow creating and mutating contract information",
+		),
 	}
 
 	if len(password) < 6:

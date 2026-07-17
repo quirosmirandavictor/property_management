@@ -40,15 +40,15 @@ class ContractModel(Base):
         server_default=func.now(),
     )
 
-    tenant_contracts: Mapped[list["TenantContractModel"]] = relationship(
+    tenant_contracts: Mapped[list[TenantContractModel]] = relationship(
         back_populates="contract",
         cascade="all, delete-orphan",
     )
-    documents: Mapped[list["ContractDocumentModel"]] = relationship(
+    documents: Mapped[list[ContractDocumentModel]] = relationship(
         back_populates="contract",
         cascade="all, delete-orphan",
     )
-    asset: Mapped["AssetModel"] = relationship(back_populates="contracts")
+    asset: Mapped[AssetModel] = relationship(back_populates="contracts")
 
 
 class TenantContractModel(Base):
@@ -78,8 +78,8 @@ class TenantContractModel(Base):
         server_default=func.now(),
     )
 
-    contract: Mapped["ContractModel"] = relationship(back_populates="tenant_contracts")
-    user: Mapped["UserModel"] = relationship()
+    contract: Mapped[ContractModel] = relationship(back_populates="tenant_contracts")
+    user: Mapped[UserModel] = relationship()
 
 
 class ContractDocumentModel(Base):
@@ -96,6 +96,11 @@ class ContractDocumentModel(Base):
     size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
     blob_container: Mapped[str] = mapped_column(String(100), nullable=False)
     blob_key: Mapped[str] = mapped_column(String(255), nullable=False)
+    uploaded_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -107,4 +112,4 @@ class ContractDocumentModel(Base):
         server_default=func.now(),
     )    
 
-    contract: Mapped["ContractModel"] = relationship(back_populates="documents")
+    contract: Mapped[ContractModel] = relationship(back_populates="documents")

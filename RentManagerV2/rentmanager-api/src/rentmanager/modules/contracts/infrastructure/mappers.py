@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from rentmanager.modules.contracts.domain.entities import Contract
-from rentmanager.modules.contracts.domain.entities import ContractDocument
-from rentmanager.modules.contracts.domain.entities import TenantContract
-from rentmanager.modules.contracts.infrastructure.models import ContractDocumentModel
-from rentmanager.modules.contracts.infrastructure.models import ContractModel
-from rentmanager.modules.contracts.infrastructure.models import TenantContractModel
+from rentmanager.modules.contracts.domain.entities import Contract, ContractDocument, TenantContract
+from rentmanager.modules.contracts.infrastructure.models import (
+	ContractDocumentModel,
+	ContractModel,
+	TenantContractModel,
+)
 
 
 def tenant_contract_to_entity(model: TenantContractModel) -> TenantContract:
@@ -31,6 +31,7 @@ def contract_document_to_entity(model: ContractDocumentModel) -> ContractDocumen
 		size_bytes=model.size_bytes,
 		blob_container=model.blob_container,
 		blob_key=model.blob_key,
+		uploaded_at=model.uploaded_at,
 	)
 
 
@@ -53,7 +54,10 @@ def contract_to_entity(model: ContractModel) -> Contract:
 	)
 
 
-def merge_contract_into_model(entity: Contract, model: ContractModel | None = None) -> ContractModel:
+def merge_contract_into_model(
+	entity: Contract,
+	model: ContractModel | None = None,
+) -> ContractModel:
 	"""Copy scalar domain fields into an ORM contract instance."""
 
 	model = model or ContractModel()

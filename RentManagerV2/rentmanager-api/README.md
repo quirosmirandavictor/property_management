@@ -185,6 +185,21 @@ Required IAM functionality codes:
 The bootstrap script (`scripts/seed_admin_user.py`) now ensures these
 functionalities exist and are linked to the configured admin role.
 
+## Contracts module API (protected by IAM)
+
+The contracts module reuses IAM JWT authentication and functionality-based
+authorization exactly like assets. No separate auth schema is created.
+
+Required IAM functionality codes:
+
+- `contracts.read`: allows reading contract records.
+- `contracts.write`: allows creating, updating, deleting, and managing
+   tenant/document references for contracts.
+
+Contract files are stored in Azure Blob Storage. MySQL stores only document
+metadata and blob references (`blob_container`, `blob_key`, `uploaded_at`).
+Binary file content is never persisted in relational tables.
+
 ## Endpoints
 
 - `GET /health`
@@ -197,3 +212,12 @@ functionalities exist and are linked to the configured admin role.
 - `GET /api/v1/assets/{asset_id}`
 - `PATCH /api/v1/assets/{asset_id}`
 - `DELETE /api/v1/assets/{asset_id}`
+- `POST /api/v1/contracts`
+- `GET /api/v1/contracts`
+- `GET /api/v1/contracts/{contract_id}`
+- `PATCH /api/v1/contracts/{contract_id}`
+- `DELETE /api/v1/contracts/{contract_id}`
+- `POST /api/v1/contracts/{contract_id}/tenants`
+- `DELETE /api/v1/contracts/{contract_id}/tenants/{user_id}`
+- `POST /api/v1/contracts/{contract_id}/documents`
+- `DELETE /api/v1/contracts/{contract_id}/documents/{document_id}`

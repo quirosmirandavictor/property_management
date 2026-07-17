@@ -27,6 +27,7 @@ class ContractDocument:
 	size_bytes: int
 	blob_container: str
 	blob_key: str
+	uploaded_at: datetime | None = None
 
 
 @dataclass(slots=True)

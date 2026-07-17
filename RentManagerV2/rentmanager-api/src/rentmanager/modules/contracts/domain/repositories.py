@@ -3,8 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
-from rentmanager.modules.contracts.domain.entities import Contract
-from rentmanager.modules.contracts.domain.entities import ContractDocument
+from rentmanager.modules.contracts.domain.entities import Contract, ContractDocument
 
 
 class ContractRepository(ABC):
@@ -25,6 +24,10 @@ class ContractRepository(ABC):
 	@abstractmethod
 	def get_by_code(self, contract_code: str) -> Contract | None:
 		"""Return one contract aggregate by business code."""
+
+	@abstractmethod
+	def list(self, *, asset_id: int | None = None, status: str | None = None) -> Sequence[Contract]:
+		"""Return contracts filtered by optional asset and status criteria."""
 
 	@abstractmethod
 	def list_by_asset(self, asset_id: int) -> Sequence[Contract]:

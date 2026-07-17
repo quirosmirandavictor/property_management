@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from rentmanager.config import Settings
-from rentmanager.config import get_settings
+from rentmanager.config import Settings, get_settings
 from rentmanager.modules.assets.interfaces.public_api import get_router as get_assets_router
+from rentmanager.modules.contracts.interfaces.public_api import get_router as get_contracts_router
 from rentmanager.modules.iam.interfaces.public_api import get_router as get_iam_router
 
 
@@ -34,6 +34,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
 	app.include_router(get_iam_router())
 	app.include_router(get_assets_router())
+	app.include_router(get_contracts_router())
 	return app
 
 app = create_app()
